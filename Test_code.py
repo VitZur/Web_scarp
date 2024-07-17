@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-import xml.etree.ElementTree as ET
+import json
 import re
 
 def get_vacancies(url):
@@ -24,7 +24,7 @@ def parse_vacancies(html):
 
     items = soup.find_all('div', class_='vacancy-card--z_UXteNo7bRGzxWVcL7y font-inter')
     print(f"Found {len(items)} vacancies on the page.")
-    #<div class="vacancy-card--z_UXteNo7bRGzxWVcL7y font-inter">
+    
     for item in items:
         title_tag = item.find('a', class_='serp-item__title')
         company_tag = item.find('a', class_='vacancy-serp__vacancy-address')
@@ -33,6 +33,7 @@ def parse_vacancies(html):
         description_tag = item.find('div', class_='g-user-content')
 
         if not title_tag or not company_tag or not city_tag:
+            print("Missing one of the required tags.")
             continue
 
         title = title_tag.text
@@ -61,28 +62,10 @@ def parse_vacancies(html):
     print(f"Total vacancies added: {count}")
     return vacancies
 
-def save_vacancies_to_xml(vacancies, filename):
-    root = ET.Element("vacancies")
-    for vacancy in vacancies:
-        vacancy_element = ET.SubElement(root, "vacancy")
-        
-        title_element = ET.SubElement(vacancy_element, "title")
-        title_element.text = vacancy['title']
-        
-        link_element = ET.SubElement(vacancy_element, "link")
-        link_element.text = vacancy['link']
-        
-        company_element = ET.SubElement(vacancy_element, "company")
-        company_element.text = vacancy['company']
-        
-        city_element = ET.SubElement(vacancy_element, "city")
-        city_element.text = vacancy['city']
-        
-        salary_element = ET.SubElement(vacancy_element, "salary")
-        salary_element.text = vacancy['salary']
-    
-    tree = ET.ElementTree(root)
-    tree.write(filename, encoding='utf-8', xml_declaration=True)
+
+def save_vacancies_to_json(vacancies, filename):
+    with open(filename, 'w', encoding='utf-8') as f:
+        json.dump(vacancies, f, ensure_ascii=False, indent=4)
 
 def main():
     url_moscow = "https://hh.ru/search/vacancy?text=Python&area=1&search_field=name&search_field=description"
@@ -96,7 +79,7 @@ def main():
 
     all_vacancies = vacancies_moscow + vacancies_spb
 
-    save_vacancies_to_xml(all_vacancies, 'vacancies.xml')
+    save_vacancies_to_json(all_vacancies, 'vacancies.json')
 
 if __name__ == '__main__':
     main()
