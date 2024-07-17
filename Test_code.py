@@ -22,13 +22,13 @@ def parse_vacancies(html):
     vacancies = []
     count = 0
 
-    items = soup.find_all('div', class_='vacancy-serp-item')
+    items = soup.find_all('div', class_='vacancy-card--z_UXteNo7bRGzxWVcL7y font-inter')
     print(f"Found {len(items)} vacancies on the page.")
-    
+    #<div class="vacancy-card--z_UXteNo7bRGzxWVcL7y font-inter">
     for item in items:
-        title_tag = item.find('a', class_='bloko-link')
-        company_tag = item.find('div', class_='vacancy-serp-item__meta-info-company')
-        city_tag = item.find('span', class_='vacancy-serp-item__meta-info')
+        title_tag = item.find('a', class_='serp-item__title')
+        company_tag = item.find('a', class_='vacancy-serp__vacancy-address')
+        city_tag = item.find('div', class_='bloko-text bloko-text_no-top-indent')
         salary_tag = item.find('span', class_='bloko-header-section-3')
         description_tag = item.find('div', class_='g-user-content')
 
