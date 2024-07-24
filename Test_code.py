@@ -9,13 +9,13 @@ def get_vacancies(url):
     
     try:
         response = requests.get(url, headers=headers)
-        response.raise_for_status()  # Raises an HTTPError if the status is 4xx, 5xx
+        response.raise_for_status()  
         print(f"Successfully connected to {url}")
     except requests.exceptions.HTTPError as http_err:
-        print(f"HTTP error occurred: {http_err}")  # HTTP error
+        print(f"HTTP error occurred: {http_err}")  
         return None
     except Exception as err:
-        print(f"An error occurred: {err}")  # Other errors
+        print(f"An error occurred: {err}")  
         return None
     
     return response.text
@@ -38,7 +38,7 @@ def parse_vacancies(html):
         company_tag = item.find('a', class_='bloko-link bloko-link_kind-secondary')
         company = company_tag.text.strip() if company_tag else 'Не указана'
         
-        city_tag = item.find('span', class_='fake-magritte-primary-text--Hdw8FvkOzzOcoR4xXWni')
+        city_tag = item.find('span', {'data-qa': 'vacancy-serp__vacancy-address_narrow'})
         city = city_tag.text.strip() if city_tag else 'Не указан'
         
         salary_tag = item.find('span', class_='fake-magritte-primary-text--Hdw8FvkOzzOcoR4xXWni compensation-text--kTJ0_rp54B2vNeZ3CTt2 separate-line-on-xs--mtby5gO4J0ixtqzW38wh')
